@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_11/data/models/post.dart';
 import 'package:task_11/domain/post_repository.dart';
+import 'package:task_11/presentation/comments_page.dart';
 
 class PostListPage extends StatefulWidget {
   const PostListPage({super.key, required this.postRepository});
@@ -32,13 +33,18 @@ class _PostListPageState extends State<PostListPage> {
             return Center(child: Text("Error ${snapshot.error}"));
           } else if (snapshot.hasData) {
             final posts = snapshot.data!;
-            return ListView.builder(
+            return ListView.separated(
               itemCount: posts.length,
+              separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Text(posts[index].title),
                   subtitle: Text(posts[index].body),
                   trailing: Text('User ID ${posts[index].userId}'),
+                  onTap: () {
+                    Navigator.push(context,
+                     MaterialPageRoute(builder: (_) => CommentsPage(postId: posts[index].id)));
+                  },
                 );
               },
             );
