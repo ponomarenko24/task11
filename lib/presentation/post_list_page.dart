@@ -37,21 +37,54 @@ class _PostListPageState extends State<PostListPage> {
               itemCount: posts.length,
               separatorBuilder: (context, index) => const Divider(),
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(posts[index].title),
-                  subtitle: Text(posts[index].body),
-                  trailing: Text('User ID ${posts[index].userId}'),
-                  onTap: () {
-                    Navigator.push(context,
-                     MaterialPageRoute(builder: (_) => CommentsPage(postId: posts[index].id)));
+                final post = posts[index];
+                return Dismissible(
+                  key: Key(post.id.toString()),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  onDismissed: (direction) async {
+                    final success = widget.postRepository.deletePost(post.id);
+                    if (await success) {
+                      setState(() {
+                        posts.removeAt(index);
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Post deleted')),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Deleting error '),
+                        ),
+                      );
+                      setState(() {});
+                    }
                   },
+                  child: ListTile(
+                    title: Text(posts[index].title),
+                    subtitle: Text(posts[index].body),
+                    trailing: Text('User ID ${posts[index].userId}'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => CommentsPage(postId: posts[index].id),
+                        ),
+                      );
+                    },
+                  ),
                 );
               },
             );
           } else {
-          return Center(child: Text("Not available"));
+            return Center(child: Text("Not available"));
           }
-        } 
+        },
       ),
     );
   }

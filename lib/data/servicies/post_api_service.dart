@@ -18,4 +18,10 @@ class PostApiService {
       throw Exception('Failed to load posts');
     }
   }
+
+  Future<bool> deletePost(int postId) async {
+  final url = 'https://jsonplaceholder.typicode.com/posts/$postId';
+  final response = await client.delete(Uri.parse(url));
+  return response.statusCode == 200;
+}
 }

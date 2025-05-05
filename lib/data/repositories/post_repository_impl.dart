@@ -11,4 +11,9 @@ class PostRepositoryImpl implements PostRepository {
   Future<List<Post>> getPosts() async {
     return await remoteDataSource.fetchPosts();
   }
+
+  @override
+  Future<bool> deletePost(int postId) async {
+    return await remoteDataSource.deletePost(postId);
+  }
 }
